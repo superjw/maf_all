@@ -33,12 +33,33 @@ import sys
 
 # build dictionary
 
-chromosome = str(sys.argv[1])
-dict_source_file = './tmp/pos_af_dict_file' + str(chromosome) + '.tmp'
-dict = {}
-with open(dict_source_file, 'r') as f:
-    for line in f:
-        line = line.strip().split('\t')
-        dict[line[0]] = line[1]
+# chromosome = str(sys.argv[1])
+# dict_source_file = './tmp/pos_af_dict_file' + str(chromosome) + '.tmp'
+# dict = {}
+# with open(dict_source_file, 'r') as f:
+#     for line in f:
+#         line = line.strip().split('\t')
+#         dict[line[0]] = line[1]
 
+# add af to the 19.rewrite.script.mapping.tsv filed
+def build_dict(chromosome):
+    d = {}
+    with open('./tmp/pos_af_dict_file' + str(chromosome) + '.tmp', 'r') as f:
+        for line in f:
+            line = line.strip().split('\t')
+            d[line[0]] = line[1]
+    return d
+
+
+chromosome = sys.argv[1]
+outfile = open('./' + chromosome + 'mapped_snp_af_1k_flank_.tsv', 'a')
+header = 'chr\tpos\trsid\teas\tamr\tafr\teur\sas\tgid\tgname\taf\n'
+dictionary = build_dict(chromosome)
+with open('../gwas/' + str(chromosome) + '19.rewrite.script.mapping.tsv', 'r') as f:
+    for line in f:
+        line = line.replace('\n', '\t')
+        pos = line.split('\t', 2)[1]
+        af = dictionary.get(pos)
+        outfile.write(line + af +'\n')
+outfile.close()
 
