@@ -22,8 +22,7 @@ def gene_length_dict(chromosome, flank):
     :param flank: flank length
     :return: dictionary {gene, length}
     """
-    file_name = os.path.abspath('/home/nis/jingwei/work/1k_analysis/gene_location\
-    /pos.chr' + str(chromosome) + '.gene.tsv')
+    file_name = os.path.abspath('/home/nis/jingwei/work/1k_analysis/gene_location/pos.chr' + str(chromosome) + '.gene.tsv')
     # file_name = './pos.chr' + str(chromosome) + '.gene.tsv'
     # the above line is used for local test
     d = {}
