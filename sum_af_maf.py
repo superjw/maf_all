@@ -141,14 +141,14 @@ def maf(gene_id, infile_name):
 
 def main():
     # exmaple usage: python3 sum_af_maf.py 22 1000
-    # chromosome = sys.argv[1]
-    chromosome = '22'
-    # flank = sys.argv[2]o
-    flank = 1000
+    chromosome = sys.argv[1]
+    # chromosome = '22'
+    flank = sys.argv[2]o
+    # flank = 1000
     infile = str(chromosome) + 'mapped_snp_af_1k_flank_.tsv'
     # the infile is the mapping result file, generated from the zcat | tt3.py
     outf = open(str(chromosome) + '.gid.maf.af.tsv', 'w')
-    header = 'gene_id\t\eas\tamr\tafr\eur\sas\t\af'
+    header = 'gene_id\teas\tamr\tafr\teur\tsas\t\AF'
     outf.write(header + '\n')
     gene_list = set_of_gene(infile)
     # print(gene_list)
