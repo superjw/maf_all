@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 """
 this is a rewrite version of maf calculation script(08/Apr/2016)
-# exmaple usage: python3 v2sum_of_maf.py 22 1000
-output file: v2.avg.maf.each.gene.chr22.tsv
+# exmaple usage: python3 sum_af_maf.py 22 1000
+output file: *.gid.maf.af.tsv
 
-this file is modified from the file v2sum_of_maf.py in order to calculate
+this file is modified from the file sum_af_maf.py in order to calculate
 af for all the samples. The input files are *mapped_snps_af_1k_flank_.tsv (19/May/2016)
 
 """
@@ -120,7 +120,7 @@ def maf(gene_id, infile_name):
 
 
 def main():
-    # exmaple usage: python3 v2sum_of_maf.py 22 1000
+    # exmaple usage: python3 sum_af_maf.py 22 1000
     chromosome = sys.argv[1]
     flank = sys.argv[2]
     infile = str(chromosome) + 'mapped_snp_af_1k_flank_.tsv'
