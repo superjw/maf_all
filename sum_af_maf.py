@@ -2,10 +2,10 @@
 """
 this is a rewrite version of maf calculation script(08/Apr/2016)
 # exmaple usage: python3 sum_af_maf.py 22 1000
-output file: *.gid.maf.af.tsv
+# output file: *.gid.maf.af.tsv
 
-this file is modified from the file sum_af_maf.py in order to calculate
-af for all the samples. The input files are *mapped_snps_af_1k_flank_.tsv (19/May/2016)
+# this file is modified from the file sum_af_maf.py in order to calculate
+# af for all the samples. The input files are *mapped_snps_af_1k_flank_.tsv (19/May/2016)
 
 """
 import os
