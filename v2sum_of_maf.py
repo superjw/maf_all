@@ -3,6 +3,10 @@
 this is a rewrite version of maf calculation script(08/Apr/2016)
 # exmaple usage: python3 v2sum_of_maf.py 22 1000
 output file: v2.avg.maf.each.gene.chr22.tsv
+
+this file is modified from the file v2sum_of_maf.py in order to calculate
+af for all the samples. The input files are *mapped_snps_af_1k_flank_.tsv (19/May/2016)
+
 """
 import os
 import sys
@@ -39,6 +43,8 @@ def set_of_gene(infile):
     :return: list, a list of mapped genes on the current chromosome
     """
     f = open(infile, 'r')
+    # could add a next(f) function to filter out the head line.
+    # As there is a filter function at the end, the next(f) is not necessary.
     all_gene_id = []
     myre = re.compile(r"ENSG\d+")
     # gene = myre.findall(f)
@@ -51,6 +57,7 @@ def set_of_gene(infile):
                 # if not g:
             all_gene_id.append(g)
     all_gene_id = filter(None, set(all_gene_id))
+    # use the filer function to filter out the None results generated when no ENSG exists in the line
     f.close()
     # print(chrome + 'list building finished!')
     return all_gene_id
@@ -60,7 +67,7 @@ def deal_biallelic(l):
     """
     combine all the comma separated values into one value
     :param l:list, input list
-    :return:list, list in the same order
+    :return:list, list in the same order(biallelic sites have been summed up)
     """
     bia = []
     for a in l:
@@ -87,16 +94,19 @@ def maf(gene_id, infile_name):
     """
     with open(infile_name, 'r') as f:
         eas = amr = afr = eur = sas = Decimal(0)
+        af = Decimal(0)
         # i = Decimal(0)
         for line in f:
             if gene_id in line:
                 line_lst = line.strip().split('\t')
-                new_maf = deal_biallelic(line_lst[3:8])
+                af = line[10]
+                new_maf = deal_biallelic(line_lst[3:8].append(af))
                 eas += new_maf[0]
                 amr += new_maf[1]
                 afr += new_maf[2]
                 eur += new_maf[3]
                 sas += new_maf[4]
+                af += new_maf[5]
                 # i += Decimal(1)
             else:
                 pass
@@ -106,27 +116,30 @@ def maf(gene_id, infile_name):
         #         (afr/length).quantize(Decimal('0.00001')),
         #         (eur/length).quantize(Decimal('0.00001')),
         #         (sas/length).quantize(Decimal('0.00001'))]
-        return eas, amr, afr, eur, sas
+        return eas, amr, afr, eur, sas, af
 
 
 def main():
     # exmaple usage: python3 v2sum_of_maf.py 22 1000
     chromosome = sys.argv[1]
     flank = sys.argv[2]
-    infile = str(chromosome) + '.rewrite.script.mapping.tsv'
+    infile = str(chromosome) + 'mapped_snp_af_1k_flank_.tsv'
     # the infile is the mapping result file, generated from the zcat | tt3.py
-    outf = open('v2.avg.maf.each.gene.chr' + str(chromosome) + '.tsv', 'w')
+    outf = open(str(chromosome) + '.gid.maf.af.tsv', 'w')
+    header = 'gene_id\t\eas\tamr\tafr\eur\sas\t\af'
+    outf.write(header + '\n')
     gene_list = set_of_gene(infile)
     # print(gene_list)
     length_dict = gene_length_dict(chromosome, flank)
     for gene_id in gene_list:
         length = Decimal(length_dict.get(gene_id))
-        eas, amr, afr, eur, sas = maf(gene_id, infile)
+        eas, amr, afr, eur, sas, af = maf(gene_id, infile)
         avg_eas = (eas / length).quantize(Decimal('0.00001'))
         avg_amr = (amr / length).quantize(Decimal('0.00001'))
         avg_afr = (afr / length).quantize(Decimal('0.00001'))
         avg_eur = (eur / length).quantize(Decimal('0.00001'))
         avg_sas = (sas / length).quantize(Decimal('0.00001'))
+        avg_af = (af / length).quantize(Decimal('0.00001'))
         # print(gene_id + '\t' +
         #       str(avg_eas) + '\t' +
         #       str(avg_amr) + '\t' +
@@ -134,11 +147,12 @@ def main():
         #       str(avg_eur) + '\t' +
         #       str(avg_sas))
         outf.write(gene_id + '\t' +
-              str(avg_eas) + '\t' +
-              str(avg_amr) + '\t' +
-              str(avg_afr) + '\t' +
-              str(avg_eur) + '\t' +
-              str(avg_sas) + '\n')
+                   str(avg_eas) + '\t' +
+                   str(avg_amr) + '\t' +
+                   str(avg_afr) + '\t' +
+                   str(avg_eur) + '\t' +
+                   str(avg_sas) + '\t' +
+                   str(avg_af) + '\n')
     outf.close()
     print('job done! ' + chromosome)
 
